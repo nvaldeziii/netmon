@@ -1,9 +1,11 @@
 import unittest
 import test_FileReader
 import test_Network
+import test_Netmon
 
 testmodules = [
     'test_FileReader',
+    'test_Netmon',
     'test_Network',
     ]
 

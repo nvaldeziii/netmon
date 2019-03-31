@@ -8,7 +8,7 @@ class TestNetwork(unittest.TestCase):
 
     def test_add_ip_address(self):
         self.Network.add_ip_address('home',IpAddress('128.0.0.1'))
-        self.assertEqual(self.Network.NetworkAddress['home'].Ip,'128.0.0.1')
+        self.assertEqual(self.Network.Address['home'].Ip,'128.0.0.1')
 
 if __name__ == '__main__':
     unittest.main()

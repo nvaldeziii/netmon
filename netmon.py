@@ -12,10 +12,10 @@ class IpAddress:
 
 class Network:
     def __init__(self):
-        self.NetworkAddress = {}
+        self.Address = {}
 
     def add_ip_address(self, name, IpObj):
-        self.NetworkAddress[name] = IpObj
+        self.Address[name] = IpObj
 
 class Printer:
     def __init__(self, IpAddresses):
@@ -36,11 +36,16 @@ class FileReader:
         self.IpFile.close()
 
 class Netmon:
+    def __init__(self, IpFile):
+        self.Network = Network()
+        IpListFile = FileReader(IpFile)
+        for line in IpListFile.Lines:
+            raw = line.split(',')
+            self.Network.add_ip_address(raw[0],IpAddress(raw[1]))
+
     def Run(self):
-        IpListFile = FileReader('ipaddress.txt')
+        pass
 
-        # for lines in IpListFile.Lines:
-        #     print(lines)
 
-NetmonProgram = Netmon()
+NetmonProgram = Netmon('ipaddress.txt')
 NetmonProgram.Run()
