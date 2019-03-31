@@ -6,3 +6,6 @@ Name2,127.0.0.2
 
         # Name3,127.0.0.3
     Name4,127.0.0.4
+
+#for duplicate exception
+#Name4,127.0.0.5
