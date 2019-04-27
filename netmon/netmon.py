@@ -1,6 +1,10 @@
 import re
 import os
 import time
+import sys
+sys.path.insert(0, '..')
+from netmon.network import Network
+from netmon.printer import Printer
 
 class IpAddress:
     def __init__(self, value, initial_time=int(time.time())):
@@ -31,42 +35,6 @@ class IpAddress:
     def refresh_downtime(self, time_of_last_ping):
         self.Downtime = self.time_delta_from_last_ping(time_of_last_ping)
 
-class Network:
-    def __init__(self):
-        self.Addresses = {}
-        self.Count = 0
-
-    def add_ip_address(self, name, IpObj, forced = False):
-        if name in self.Addresses and not forced:
-            raise self.DuplicateAddressExceptionError('Duplicate Network Name was found!')
-
-        self.Addresses[name] = IpObj
-        self.Count = self.Count + 1
-
-    def ping_all(self):
-        for key in sorted(self.Addresses):
-            isup = self.ping(self.Addresses[key].Ip)
-            self.Addresses[key].refresh(isup, int(time.time()))
-
-    def ping(self, ip):
-        return True if os.system('ping -n 1 -w 1 ' + ip + ' > nul') is 0 else False
-
-    class DuplicateAddressExceptionError(Exception):
-        """Raised if duplicate name has been added to the network"""
-        pass
-
-class Printer:
-    def __init__(self):
-        pass
-
-    def print(self, Network):
-        for key in sorted(Network.Addresses):
-                to_print = '{} -> {} | isup: {} | uptime: {} | downtime: {}'.format(
-                    key ,Network.Addresses[key].Ip ,str(Network.Addresses[key].Is_Up)
-                    ,Network.Addresses[key].Uptime ,Network.Addresses[key].Downtime
-                )
-                print(to_print)
-
 class FileReader:
     def __init__(self,filename):
         self.IpFile = open(filename, 'r')
@@ -91,15 +59,25 @@ class Netmon:
             self.Network.add_ip_address(raw[0],IpAddress(raw[1]))
 
     def Run_Continuously(self):
+        os.system('cls')
         while(True):
-            os.system('cls')
+            start = time.time()
             self.Run()
-            time.sleep(1)
+            # time.sleep(1)
+            Printer.print_at(Printer.current_row ,0, '--------------------------------------------------')
+            Printer.print_at(Printer.current_row ,0, 'probe time: {}'.format(self.Network.ping_all_execution_time))
+            Printer.print_at(Printer.current_row ,0, 'total proc time: {}'.format(time.time() - start))
+            Printer.print_at(Printer.current_row ,0, '--------------------------------------------------')
 
     def Run(self):
             self.Network.ping_all()
             self.Printer.print(self.Network)
 
+def main():
+    NetmonProgram = Netmon('ipaddress.txt')
+    NetmonProgram.Run_Continuously()
 
-NetmonProgram = Netmon('ipaddress.txt')
-NetmonProgram.Run_Continuously()
+if __name__ == "__main__":
+    main()
+
+

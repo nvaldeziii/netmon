@@ -17,11 +17,11 @@ class TestNetwork(unittest.TestCase):
 
     def test_ping_success(self):
         self.Network.add_ip_address('home',IpAddress('127.0.0.1'))
-        self.assertTrue(self.Network.ping(self.Network.Addresses['home'].Ip))
+        self.assertTrue(Network.ping_ip(self.Network.Addresses['home'].Ip))
 
     def test_ping_fail(self):
         self.Network.add_ip_address('not_home',IpAddress('128.0.0.1'))
-        self.assertFalse(self.Network.ping(self.Network.Addresses['not_home'].Ip))
+        self.assertFalse(Network.ping_ip(self.Network.Addresses['not_home'].Ip))
 
 if __name__ == '__main__':
     unittest.main()
