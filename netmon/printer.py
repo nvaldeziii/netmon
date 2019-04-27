@@ -9,6 +9,9 @@ from itertools import product
 
 from threading import Lock
 
+import cursor
+cursor.hide()
+
 #-------- <windows only>---------------
 STD_OUTPUT_HANDLE = -11
 
@@ -24,6 +27,9 @@ class Printer:
 
     def __init__(self, thread_count = 4):
         self.thread_count = thread_count
+
+    def __del__(self):
+        cursor.show()
 
     @staticmethod
     def print_at(r, c, s, addNewLine=1):
