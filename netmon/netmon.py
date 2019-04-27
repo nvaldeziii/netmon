@@ -63,11 +63,11 @@ class Netmon:
         while(True):
             start = time.time()
             self.Run()
-            # time.sleep(1)
-            Printer.print_at(Printer.current_row ,0, '--------------------------------------------------')
-            Printer.print_at(Printer.current_row ,0, 'probe time: {}'.format(self.Network.ping_all_execution_time))
-            Printer.print_at(Printer.current_row ,0, 'total proc time: {}'.format(time.time() - start))
-            Printer.print_at(Printer.current_row ,0, '--------------------------------------------------')
+            Printer.format_bar()
+            Printer.format_other('probe time: {}s'.format(str(round(self.Network.ping_all_execution_time, 4))))
+            Printer.format_other('total proc time: {}s'.format(str(round(time.time() - start,4))))
+            Printer.format_bar()
+            time.sleep(1)
 
     def Run(self):
             self.Network.ping_all()
