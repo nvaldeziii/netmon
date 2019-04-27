@@ -1,6 +1,6 @@
 import unittest
-from netmon import IpAddress
-from netmon import Network
+from netmon.netmon import IpAddress
+from netmon.netmon import Network
 
 class TestNetwork(unittest.TestCase):
     def setUp(self):

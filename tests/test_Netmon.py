@@ -1,9 +1,9 @@
 import unittest
-from netmon import Netmon
+from netmon.netmon import Netmon
 
 class TestNetwork(unittest.TestCase):
     def setUp(self):
-        self.Netmon = Netmon('ipaddress_test.txt')
+        self.Netmon = Netmon('ipaddress.txt')
         self.Netmon.Run()
 
     def test_init(self):

@@ -72,11 +72,12 @@ class Netmon:
         while(True):
             os.system('cls')
             self.Run()
+            time.sleep(1)
 
     def Run(self):
             self.Printer.print(self.Network)
             self.Network.ping_all()
-            time.sleep(1)
 
-NetmonProgram = Netmon('ipaddress.txt')
-NetmonProgram.Run_Continuously()
+
+# NetmonProgram = Netmon('ipaddress.txt')
+# NetmonProgram.Run_Continuously()
