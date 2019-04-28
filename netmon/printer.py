@@ -126,10 +126,11 @@ class Printer:
         print_queue = []
         printer_thread_pool = ThreadPool(self.thread_count)
         for index, key in enumerate(sorted(Network.Addresses), start=Printer.current_row):
+                isup_status = 'up' if Network.Addresses[key].Is_Up else 'down !'
                 to_print = Printer.format_line(
                         key,
                         Network.Addresses[key].Ip,
-                        str(Network.Addresses[key].Is_Up),
+                        isup_status,
                         datetime.timedelta(seconds=Network.Addresses[key].Uptime),
                         datetime.timedelta(seconds=Network.Addresses[key].Downtime)
                     )
