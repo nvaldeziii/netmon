@@ -86,10 +86,10 @@ class Netmon:
             start = time.time()
             self.Run()
             Printer.format_bar()
-            Printer.format_other('probe time: {}s'.format(str(round(self.Network.ping_all_execution_time, 4)))
+            Printer.format_other('     total probe time: {}s'.format(str(round(self.Network.ping_all_execution_time, 4)))
                 , str(datetime.datetime.now()))
             total_proc_time = time.time() - start
-            Printer.format_other('total proc time: {}s'.format(str(round(total_proc_time,4))))
+            Printer.format_other('total processing time: {}s'.format(str(round(total_proc_time,4))))
             Printer.format_bar()
             time.sleep(1 - total_proc_time)
 
