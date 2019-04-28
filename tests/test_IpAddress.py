@@ -25,19 +25,61 @@ class TestIpAddress(unittest.TestCase):
         self.move_time_and_assert(True, self.GoodIpAddress,2,0)
 
     def test_refresh_bad_ping_only(self):
-        self.move_time_and_assert(False, self.GoodIpAddress,0,1)
-        self.move_time_and_assert(False, self.GoodIpAddress,0,2)
+        self.move_time_and_assert(False, self.GoodIpAddress,0,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,0,0)
 
     def test_refresh_bad_ping_then_good(self):
+        time_before_false_negative = self.current_time
         self.move_time_and_assert(True, self.GoodIpAddress,1,0)
-        self.move_time_and_assert(False, self.GoodIpAddress,1,1)
-        self.move_time_and_assert(True, self.GoodIpAddress,0,1)
-        self.move_time_and_assert(True, self.GoodIpAddress,1,1)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(True, self.GoodIpAddress,3,0, overide_last_ok_ping_time=time_before_false_negative)
+        self.move_time_and_assert(True, self.GoodIpAddress,4,0)
 
     def test_refresh_good_ping_then_bad(self):
+        time_before_false_negative = self.current_time
         self.move_time_and_assert(True, self.GoodIpAddress,1,0)
-        self.move_time_and_assert(False, self.GoodIpAddress,1,1)
-        self.move_time_and_assert(False, self.GoodIpAddress,1,2)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(True, self.GoodIpAddress,4,0, overide_last_ok_ping_time=time_before_false_negative)
+        self.move_time_and_assert(True, self.GoodIpAddress,5,0)
+
+    def test_refresh_more_than_three_bad(self):
+        self.move_time_and_assert(True, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,4)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,5)
+
+    def test_refresh_more_than_three_bad_then_good(self):
+        self.move_time_and_assert(True, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,4)
+        self.move_time_and_assert(False, self.GoodIpAddress,1,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,0,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,1,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,2,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,3,5)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,5)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,5)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,5)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,4)
+
+    def test_refresh_three_bad_then_good(self):
+        self.move_time_and_assert(True, self.GoodIpAddress,1,0)
+        self.move_time_and_assert(True, self.GoodIpAddress,2,0)
+        self.move_time_and_assert(True, self.GoodIpAddress,3,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,0)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,4)
+        self.move_time_and_assert(False, self.GoodIpAddress,3,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,0,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,1,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,2,5)
+        self.move_time_and_assert(True, self.GoodIpAddress,3,5)
 
     def assert_all_ip_attribute(self,ip_address_obj, uptime, downtime,
         time_of_last_success_ping,time_of_last_ping, Is_Up):
@@ -47,10 +89,12 @@ class TestIpAddress(unittest.TestCase):
         self.assertEqual(ip_address_obj.time_of_last_ping, time_of_last_ping )
         self.assertEqual(ip_address_obj.Is_Up, Is_Up)
 
-    def move_time_and_assert(self, isup, IpAddressObj, expect_up, expect_down):
+    def move_time_and_assert(self, isup, IpAddressObj, expect_up, expect_down, overide_last_ok_ping_time = -1):
         last_time = self.current_time
         self.current_time += 1
-        if isup:
+        if overide_last_ok_ping_time > -1:
+            self.last_ok_ping_time = overide_last_ok_ping_time
+        elif isup:
             if not self.prev_up_status:
                 self.last_ok_ping_time = self.current_time
         else:

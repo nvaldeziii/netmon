@@ -6,6 +6,7 @@ from ctypes import *
 from multiprocessing.dummy import Pool as ThreadPool
 import threading
 from itertools import product
+import datetime
 
 from threading import Lock
 
@@ -85,9 +86,13 @@ class Printer:
         return message
 
     @staticmethod
-    def format_other(message, max_len = 78):
+    def format_other(message, message2='', max_len = 78):
+        just_lenth = max_len
         final_message  = '|'
-        final_message += message.rjust(max_len)
+        if message2 != '':
+            just_lenth = int(max_len/2)
+            final_message += message2.ljust(just_lenth)
+        final_message += message.rjust(just_lenth)
         final_message += '|'
         Printer.print_at(0 ,0, final_message)
 
@@ -99,8 +104,13 @@ class Printer:
         print_queue = []
         printer_thread_pool = ThreadPool(self.thread_count)
         for index, key in enumerate(sorted(Network.Addresses), start=Printer.current_row):
-                to_print = Printer.format_line(key, Network.Addresses[key].Ip, str(Network.Addresses[key].Is_Up),
-                    Network.Addresses[key].Uptime, Network.Addresses[key].Downtime)
+                to_print = Printer.format_line(
+                        key,
+                        Network.Addresses[key].Ip,
+                        str(Network.Addresses[key].Is_Up),
+                        datetime.timedelta(seconds=Network.Addresses[key].Uptime),
+                        datetime.timedelta(seconds=Network.Addresses[key].Downtime)
+                    )
 
                 print_queue.append((index, 0, to_print, 1))
                 printer_thread_pool.map(Printer.print_at_tuple, print_queue)

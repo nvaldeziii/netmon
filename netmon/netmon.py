@@ -1,6 +1,7 @@
 import re
 import os
 import time
+import datetime
 import sys
 sys.path.insert(0, '..')
 from netmon.network import Network
@@ -14,16 +15,35 @@ class IpAddress:
         self.time_of_last_success_ping = initial_time
         self.time_of_last_ping = initial_time
         self.Is_Up = True
+        self.downtime_count = 0
+        self.time_before_false_negative = initial_time
+
+    def is_major_downtime(self):
+        return self.downtime_count > 2
+
+    def ping_ok(self, time_of_last_ping):
+        if not self.Is_Up:
+            if self.is_major_downtime():
+                self.time_of_last_success_ping = time_of_last_ping
+                self.downtime_count = 0
+            else:
+                self.time_of_last_success_ping = self.time_before_false_negative
+        self.time_before_false_negative = self.time_of_last_success_ping
+        self.refresh_uptime(time_of_last_ping)
+
+    def ping_not_ok(self, time_of_last_ping):
+        if self.Is_Up:
+            self.time_of_last_success_ping = self.time_of_last_ping
+        if self.is_major_downtime():
+            self.refresh_downtime(time_of_last_ping)
+        else:
+            self.downtime_count += 1
 
     def refresh(self, current_ping_status, time_of_last_ping):
         if current_ping_status:
-            if not self.Is_Up:
-                self.time_of_last_success_ping = time_of_last_ping
-            self.refresh_uptime(time_of_last_ping)
+            self.ping_ok(time_of_last_ping)
         else:
-            if not current_ping_status and self.Is_Up:
-                self.time_of_last_success_ping = self.time_of_last_ping
-            self.refresh_downtime(time_of_last_ping)
+            self.ping_not_ok(time_of_last_ping)
 
         self.time_of_last_ping = time_of_last_ping
         self.Is_Up = current_ping_status
@@ -66,10 +86,12 @@ class Netmon:
             start = time.time()
             self.Run()
             Printer.format_bar()
-            Printer.format_other('probe time: {}s'.format(str(round(self.Network.ping_all_execution_time, 4))))
-            Printer.format_other('total proc time: {}s'.format(str(round(time.time() - start,4))))
+            Printer.format_other('probe time: {}s'.format(str(round(self.Network.ping_all_execution_time, 4)))
+                , str(datetime.datetime.now()))
+            total_proc_time = time.time() - start
+            Printer.format_other('total proc time: {}s'.format(str(round(total_proc_time,4))))
             Printer.format_bar()
-            time.sleep(1)
+            time.sleep(1 - total_proc_time)
 
     def Run(self):
             self.Network.ping_all()
