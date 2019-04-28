@@ -65,7 +65,7 @@ class FileReader:
 
     def read(self):
         for linestring in self.IpFile:
-            if re.match(r'^[^#]\w+,\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b',linestring.strip()):
+            if re.match(r'^[^#].+,((\b[0-9]{1,3}(\.[0-9]{1,3}){3}\b)|[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*))',linestring.strip()):
                 self.Lines.append(linestring.strip())
 
     def __del__(self):

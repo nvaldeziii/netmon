@@ -1,4 +1,4 @@
 # Test
-Name2,128.0.0.1
-Name1,127.0.0.1
-Name3,129.0.0.1
+Home,127.0.0.1
+Google,www.google.com
+Open-dns,8.8.8.8
