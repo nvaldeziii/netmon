@@ -14,6 +14,9 @@ import cursor
 cursor.hide()
 
 #-------- <windows only>---------------
+
+from dependency.win import color_console as Colors
+
 STD_OUTPUT_HANDLE = -11
 
 class COORD(Structure):
@@ -26,6 +29,18 @@ class Printer:
     mutex = Lock()
     current_row = 0
 
+    COLOR_DEFAULT = Colors.get_text_attr()
+    COLOR_DEFAULT_BG = COLOR_DEFAULT & 0x0070
+
+    @staticmethod
+    def set_printer_color_to_red():
+        Colors.set_text_attr(Colors.FOREGROUND_RED | Printer.COLOR_DEFAULT_BG )
+
+    @staticmethod
+    def set_printer_color_to_default():
+        Colors.set_text_attr(Printer.COLOR_DEFAULT | Printer.COLOR_DEFAULT_BG )
+        # Colors.set_text_attr(Colors.FOREGROUND_GREY | Printer.color_default_bg )
+
     def __init__(self, thread_count = 4):
         self.thread_count = thread_count
 
@@ -34,7 +49,7 @@ class Printer:
 
     @staticmethod
     def print_at(r, c, s, addNewLine=1):
-        Printer.mutex.acquire()
+
         if r is 0:
             r = Printer.current_row
         #-------- <windows only>---------------
@@ -45,12 +60,19 @@ class Printer:
         #-------- </windows only>---------------
 
         Printer.current_row = r + addNewLine
-        Printer.mutex.release()
+
 
     @staticmethod
     def print_at_tuple(print_at_args):
-        r, c, s, addNewLine = print_at_args
+        Printer.mutex.acquire()
+
+        r, c, s, addNewLine, isup = print_at_args
+        if not isup:
+            Printer.set_printer_color_to_red()
         Printer.print_at(r, c, s, addNewLine)
+        Printer.set_printer_color_to_default()
+
+        Printer.mutex.release()
 
     @staticmethod
     def format_header(message, max_len = 76):
@@ -112,7 +134,7 @@ class Printer:
                         datetime.timedelta(seconds=Network.Addresses[key].Downtime)
                     )
 
-                print_queue.append((index, 0, to_print, 1))
+                print_queue.append((index, 0, to_print, 1, Network.Addresses[key].Is_Up))
                 printer_thread_pool.map(Printer.print_at_tuple, print_queue)
 
         printer_thread_pool.close()

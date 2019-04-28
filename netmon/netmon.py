@@ -65,7 +65,7 @@ class FileReader:
 
     def read(self):
         for linestring in self.IpFile:
-            if re.match(r'^[^#].+,((\b[0-9]{1,3}(\.[0-9]{1,3}){3}\b)|[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*))',linestring.strip()):
+            if re.match(r'^[^#].+,\s*((\b[0-9]{1,3}(\.[0-9]{1,3}){3}\b)|[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*))',linestring.strip()):
                 self.Lines.append(linestring.strip())
 
     def __del__(self):
@@ -78,7 +78,7 @@ class Netmon:
         IpListFile = FileReader(IpFile)
         for line in IpListFile.Lines:
             raw = line.split(',')
-            self.Network.add_ip_address(raw[0],IpAddress(raw[1]))
+            self.Network.add_ip_address(raw[0].strip(),IpAddress(raw[1].strip()))
 
     def Run_Continuously(self):
         os.system('cls')
