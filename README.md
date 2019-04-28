@@ -14,4 +14,4 @@
     python netmon.py
 
 #### Screenshot
-![Netmon Screenshot](https://raw.githubusercontent.com/nvaldeziii/netmon/master/documentation/screenshot_program_printer.PNG)
+![Netmon Screenshot](documentation/screenshot_program_printer.PNG)
