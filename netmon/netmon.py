@@ -13,12 +13,12 @@ class IpAddress:
         self.Downtime = 0
         self.time_of_last_success_ping = initial_time
         self.time_of_last_ping = initial_time
-        self.Is_Up = False
+        self.Is_Up = True
 
     def refresh(self, current_ping_status, time_of_last_ping):
         if current_ping_status:
             if not self.Is_Up:
-                self.time_of_last_success_ping = self.time_of_last_ping
+                self.time_of_last_success_ping = time_of_last_ping
             self.refresh_uptime(time_of_last_ping)
         else:
             if not current_ping_status and self.Is_Up:
