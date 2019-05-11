@@ -1,9 +1,9 @@
-import re
 import os
 import time
 import datetime
 import sys
 sys.path.insert(0, '..')
+from netmon.file_reader import FileReader
 from netmon.network import Network
 from netmon.printer import Printer
 
@@ -56,20 +56,6 @@ class IpAddress:
 
     def refresh_downtime(self, time_of_last_ping):
         self.Downtime = self.time_delta_from_last_ping(time_of_last_ping)
-
-class FileReader:
-    def __init__(self,filename):
-        self.IpFile = open(filename, 'r')
-        self.Lines = []
-        self.read()
-
-    def read(self):
-        for linestring in self.IpFile:
-            if re.match(r'^[^#].+,\s*((\b[0-9]{1,3}(\.[0-9]{1,3}){3}\b)|[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*))',linestring.strip()):
-                self.Lines.append(linestring.strip())
-
-    def __del__(self):
-        self.IpFile.close()
 
 class Netmon:
     def __init__(self, IpFile):

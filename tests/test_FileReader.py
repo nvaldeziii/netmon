@@ -6,7 +6,7 @@ from netmon.netmon import FileReader
 
 class TestFileReader(unittest.TestCase):
     def setUp(self):
-        self.FileReader = FileReader('ipaddress.txt')
+        self.FileReader = FileReader('ipaddress_test.json')
 
     def test_Read(self):
         self.assertEqual(self.FileReader.Lines[0],'Name,127.0.0.1')

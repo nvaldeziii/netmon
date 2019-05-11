@@ -1,6 +1,7 @@
 
 from netmon.network import Network
 from os import system, name
+import sys
 from ctypes import *
 
 from multiprocessing.dummy import Pool as ThreadPool
@@ -15,7 +16,8 @@ cursor.hide()
 
 #-------- <windows only>---------------
 
-from dependency.win import color_console as Colors
+sys.path.insert(0, '..')
+from netmon.dependency.win import color_console as Colors
 
 STD_OUTPUT_HANDLE = -11
 
@@ -39,9 +41,8 @@ class Printer:
     @staticmethod
     def set_printer_color_to_default():
         Colors.set_text_attr(Printer.COLOR_DEFAULT | Printer.COLOR_DEFAULT_BG )
-        # Colors.set_text_attr(Colors.FOREGROUND_GREY | Printer.color_default_bg )
 
-    def __init__(self, thread_count = 4):
+    def __init__(self, thread_count = 1):
         self.thread_count = thread_count
 
     def __del__(self):
@@ -89,7 +90,7 @@ class Printer:
 
     @staticmethod
     def format_top(max_len = 80):
-        message = Printer.format_line('Name','Ip Address','Status','Uptime','Downtime')
+        message = Printer.format_line('Name','Ip Address','Stat','Uptime','Downtime')
         Printer.print_at(0,0, message)
 
     @staticmethod
@@ -103,7 +104,7 @@ class Printer:
     @staticmethod
     def format_line(name, ip, stat, up, down):
         message  = '| {}| {}| {}| {}| {}|'.format(
-            name.ljust(11), ip.ljust(17),stat.ljust(13), str(up).ljust(13), str(down).ljust(15)
+            name.ljust(30), ip.ljust(16),stat.ljust(5), str(up).ljust(9), str(down).ljust(9)
         )
         return message
 
@@ -126,18 +127,17 @@ class Printer:
         print_queue = []
         printer_thread_pool = ThreadPool(self.thread_count)
         for index, key in enumerate(sorted(Network.Addresses), start=Printer.current_row):
-                isup_status = 'up' if Network.Addresses[key].Is_Up else 'down !'
-                to_print = Printer.format_line(
-                        key,
-                        Network.Addresses[key].Ip,
-                        isup_status,
-                        datetime.timedelta(seconds=Network.Addresses[key].Uptime),
-                        datetime.timedelta(seconds=Network.Addresses[key].Downtime)
-                    )
+            isup_status = 'ok' if Network.Addresses[key].Is_Up else 'nok!'
+            to_print = Printer.format_line(
+                    key,
+                    Network.Addresses[key].Ip,
+                    isup_status,
+                    datetime.timedelta(seconds=Network.Addresses[key].Uptime),
+                    datetime.timedelta(seconds=Network.Addresses[key].Downtime)
+                )
 
-                print_queue.append((index, 0, to_print, 1, Network.Addresses[key].Is_Up))
-                printer_thread_pool.map(Printer.print_at_tuple, print_queue)
-
+            print_queue.append((index, 0, to_print, 1, Network.Addresses[key].Is_Up))
+        printer_thread_pool.map(Printer.print_at_tuple, print_queue)
         printer_thread_pool.close()
         printer_thread_pool.join()
 

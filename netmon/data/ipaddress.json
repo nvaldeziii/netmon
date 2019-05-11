@@ -1,0 +1,18 @@
+[
+    {
+        "name" : "home",
+        "ip"   : "127.0.0.1"
+    },
+    {
+        "name" : "Google",
+        "ip"   : "www.google.com"
+    },
+    {
+        "name" : "Open-dns",
+        "ip"   : "8.8.8.8"
+    },
+    {
+        "name" : "bad",
+        "ip"   : "192.168.254.250"
+    }
+]

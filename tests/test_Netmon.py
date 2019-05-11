@@ -3,7 +3,7 @@ from netmon.netmon import Netmon
 
 class TestNetwork(unittest.TestCase):
     def setUp(self):
-        self.Netmon = Netmon('ipaddress.txt')
+        self.Netmon = Netmon('ipaddress_test.json')
         self.Netmon.Run()
 
     def test_init(self):

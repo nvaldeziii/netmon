@@ -1,5 +1,0 @@
-# Test
-Home,127.0.0.1
-Google,www.google.com
-Open-dns, 8.8.8.8
-bad, 192.168.254.250
