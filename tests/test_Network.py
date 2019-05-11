@@ -14,6 +14,8 @@ class TestNetwork(unittest.TestCase):
         self.Network.add_ip_address('home',IpAddress('127.0.0.1'))
         self.assertRaises(self.Network.DuplicateAddressExceptionError, self.Network.add_ip_address, 'home',IpAddress('128.0.0.1'))
 
+    def test_ping_from_proxy(self):
+        pass
 
     def test_ping_success(self):
         self.Network.add_ip_address('home',IpAddress('127.0.0.1'))
